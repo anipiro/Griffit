@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, TrendingUp } from "lucide-react";
 import DailyOverview from "@/components/parent/DailyOverview";
 import EmotionalInsights from "@/components/parent/EmotionalInsights";
+import ParentBadges from "@/components/parent/ParentBadges";
 import type { User } from "@supabase/supabase-js";
 
 const ParentDashboard = () => {
@@ -110,9 +111,10 @@ const ParentDashboard = () => {
                 <h2 className="text-3xl font-bold text-foreground">
                   {child.child_name}'s Journey
                 </h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <DailyOverview childId={child.id} childName={child.child_name} />
                   <EmotionalInsights childId={child.id} />
+                  <ParentBadges childId={child.id} childName={child.child_name} />
                 </div>
               </div>
             ))}

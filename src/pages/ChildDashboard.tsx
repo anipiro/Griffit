@@ -7,6 +7,9 @@ import { LogOut, Sparkles } from "lucide-react";
 import EmotionPlayground from "@/components/child/EmotionPlayground";
 import CalmCorner from "@/components/child/CalmCorner";
 import ProgressGarden from "@/components/child/ProgressGarden";
+import ChoiceExplorer from "@/components/child/ChoiceExplorer";
+import CreativeHub from "@/components/child/CreativeHub";
+import GriffitCompanion from "@/components/child/GriffitCompanion";
 import type { User } from "@supabase/supabase-js";
 
 const ChildDashboard = () => {
@@ -96,8 +99,20 @@ const ChildDashboard = () => {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Row 1 */}
           <EmotionPlayground childId={childData?.id} />
+          <GriffitCompanion childName={childData?.child_name} />
+          
+          {/* Row 2 */}
+          <ChoiceExplorer childId={childData?.id} />
           <CalmCorner childId={childData?.id} />
+          
+          {/* Row 3 - Full Width */}
+          <div className="lg:col-span-2">
+            <CreativeHub childId={childData?.id} />
+          </div>
+          
+          {/* Row 4 - Full Width */}
           <div className="lg:col-span-2">
             <ProgressGarden childId={childData?.id} />
           </div>
