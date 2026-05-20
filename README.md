@@ -44,3 +44,10 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Local setup notes
+
+- Copy `/.env.example` to `/.env` and replace the `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` placeholders with your Supabase project values.
+- Start the dev server with `npm run dev`. If the app opens on the wrong port, check the terminal for the URL (Vite may auto-choose an available port).
+
+If you are onboarding a new contributor, including a filled `.env.example` (with placeholder values) helps them see a clear config message in the browser if the real keys are not provided.
+

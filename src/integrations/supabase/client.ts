@@ -5,22 +5,56 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+// We'll export a single `supabase` binding. If env vars are missing, assign
+// a safe stub implementation that surfaces errors but doesn't crash the app.
+let supabase: any = null;
+
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  // Provide a clear runtime error so the developer knows env vars are missing
   const msg = `Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY. Create a .env in the project root with these values and restart the dev server.`;
-  // Log to console and throw so the overlay shows the message instead of vague "failed to fetch"
   // eslint-disable-next-line no-console
   console.error(msg, { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY });
-  throw new Error(msg);
+  try {
+    const root = typeof document !== 'undefined' && document.getElementById('root');
+    if (root) {
+      root.innerHTML = `
+        <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial; padding:24px; color:#111">
+          <h2 style="color:#c53030; margin:0 0 8px">Configuration error</h2>
+          <pre style="white-space:pre-wrap; background:#fff3f2; padding:12px; border-radius:6px; border:1px solid #ffdada">${msg}</pre>
+          <p style="margin-top:8px">See <strong>.env</strong> in the project root or the README for setup instructions.</p>
+        </div>`;
+    }
+  } catch (e) {
+    // ignore DOM errors
+  }
+
+  const errorResult = async () => ({ data: null, error: new Error(msg) });
+  supabase = {
+    auth: {
+      getSession: async () => ({ data: { session: null }, error: null }),
+      signIn: errorResult,
+      signOut: errorResult,
+      onAuthStateChange: () => ({ data: null, error: new Error(msg), subscription: { unsubscribe: () => {} } })
+    },
+    from: () => ({
+      select: errorResult,
+      insert: errorResult,
+      update: errorResult,
+      delete: errorResult
+    })
+  };
 }
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
-  }
-});
+if (!supabase) {
+  supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    auth: {
+      storage: localStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+    }
+  });
+}
+
+export { supabase };
