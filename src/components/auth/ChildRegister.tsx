@@ -51,7 +51,20 @@ const ChildRegister = () => {
 
       if (authError) throw authError;
 
-      if (!authData.user) {
+      // supabase may not return an active session immediately (email confirmations),
+      // so ensure we have a signed-in user before inserting rows that rely on auth.uid().
+      let user = authData?.user;
+      if (!user) {
+        // Attempt to sign in with the same credentials to establish a session for testing.
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (signInError) throw signInError;
+        user = signInData?.user;
+      }
+
+      if (!user) {
         throw new Error("User creation failed");
       }
 
@@ -59,7 +72,8 @@ const ChildRegister = () => {
       const { error: profileError } = await supabase
         .from("children")
         .insert({
-          user_id: authData.user.id,
+          user_id: user.id,
+          email,
           child_name: childName,
           avatar_type: "penguin",
         });

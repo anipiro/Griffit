@@ -5,6 +5,15 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  // Provide a clear runtime error so the developer knows env vars are missing
+  const msg = `Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY. Create a .env in the project root with these values and restart the dev server.`;
+  // Log to console and throw so the overlay shows the message instead of vague "failed to fetch"
+  // eslint-disable-next-line no-console
+  console.error(msg, { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY });
+  throw new Error(msg);
+}
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 

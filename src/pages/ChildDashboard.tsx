@@ -10,6 +10,8 @@ import ProgressGarden from "@/components/child/ProgressGarden";
 import ChoiceExplorer from "@/components/child/ChoiceExplorer";
 import CreativeHub from "@/components/child/CreativeHub";
 import GriffitCompanion from "@/components/child/GriffitCompanion";
+import EncouragementInbox from "@/components/child/EncouragementInbox";
+import LinkByEmailCard from "@/components/linking/LinkByEmailCard";
 import type { User } from "@supabase/supabase-js";
 
 const ChildDashboard = () => {
@@ -99,6 +101,15 @@ const ChildDashboard = () => {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="lg:col-span-2">
+            <LinkByEmailCard mode="child" onLinked={() => window.location.reload()} />
+          </div>
+
+          {/* Inbox */}
+          <div className="lg:col-span-2">
+            <EncouragementInbox childId={childData?.id} />
+          </div>
+
           {/* Row 1 */}
           <EmotionPlayground childId={childData?.id} />
           <GriffitCompanion childName={childData?.child_name} />

@@ -40,18 +40,38 @@ const ParentBadges = ({ childId, childName }: ParentBadgesProps) => {
     setSending(true);
 
     try {
-      // Log as a special progress entry that appears in child's garden
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("You must be signed in as a parent.");
+      }
+
+      const { data: parentProfile, error: parentError } = await supabase
+        .from("parents")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (parentError || !parentProfile) {
+        throw new Error("Parent profile not found.");
+      }
+
+      // Store the actual encouragement so the child can read it later.
+      await supabase.from("encouragement_messages").insert({
+        child_id: childId,
+        parent_id: parentProfile.id,
+        badge_type: selectedBadge.type,
+        message: message.trim(),
+      });
+
+      // Log as a special progress entry that appears in child's garden.
       await supabase.from("progress_entries").insert({
         child_id: childId,
         activity_type: `parent_badge_${selectedBadge.type}`,
       });
 
-      // Could also create a separate badges table in the future
-      // For now, this adds to their progress garden
-
       toast({
         title: "Badge sent! 🎉",
-        description: `${childName} will see your encouragement in their Progress Garden!`,
+        description: `${childName} will see your encouragement in their inbox!`,
       });
 
       setMessage("");

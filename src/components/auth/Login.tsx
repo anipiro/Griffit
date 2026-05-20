@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 
@@ -12,6 +13,7 @@ const Login = () => {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [accountType, setAccountType] = useState<"parent" | "child">("child");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -37,16 +39,29 @@ const Login = () => {
 
       if (error) throw error;
 
-      // Check if user is parent or child
-      const { data: parentData } = await supabase
-        .from("parents")
-        .select("id")
-        .eq("user_id", data.user.id)
-        .single();
+      if (accountType === "parent") {
+        const { data: parentData, error: parentLookupError } = await supabase
+          .from("parents")
+          .select("id")
+          .eq("user_id", data.user.id)
+          .single();
 
-      if (parentData) {
+        if (parentLookupError || !parentData) {
+          throw new Error("This account does not have a parent profile yet. Please create the parent profile or sign in as a child.");
+        }
+
         navigate("/parent-dashboard");
       } else {
+        const { data: childData, error: childLookupError } = await supabase
+          .from("children")
+          .select("id")
+          .eq("user_id", data.user.id)
+          .single();
+
+        if (childLookupError || !childData) {
+          throw new Error("This account does not have a child profile yet. Please create the child profile or sign in as a parent.");
+        }
+
         navigate("/child-dashboard");
       }
 
@@ -68,6 +83,24 @@ const Login = () => {
   return (
     <form onSubmit={handleLogin} className="space-y-6">
       <div className="space-y-4">
+        <div className="space-y-2">
+          <Label className="text-lg font-medium">I am signing in as</Label>
+          <RadioGroup
+            value={accountType}
+            onValueChange={(value) => setAccountType(value as "parent" | "child")}
+            className="grid grid-cols-2 gap-3"
+          >
+            <label className="flex items-center gap-3 rounded-xl border-2 p-3 cursor-pointer has-[:checked]:border-primary">
+              <RadioGroupItem value="parent" id="login-parent" />
+              <span>Parent</span>
+            </label>
+            <label className="flex items-center gap-3 rounded-xl border-2 p-3 cursor-pointer has-[:checked]:border-secondary">
+              <RadioGroupItem value="child" id="login-child" />
+              <span>Child</span>
+            </label>
+          </RadioGroup>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="email" className="text-lg font-medium">Email</Label>
           <Input

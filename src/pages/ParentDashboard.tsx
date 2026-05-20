@@ -7,6 +7,7 @@ import { LogOut, TrendingUp } from "lucide-react";
 import DailyOverview from "@/components/parent/DailyOverview";
 import EmotionalInsights from "@/components/parent/EmotionalInsights";
 import ParentBadges from "@/components/parent/ParentBadges";
+import LinkByEmailCard from "@/components/linking/LinkByEmailCard";
 import type { User } from "@supabase/supabase-js";
 
 const ParentDashboard = () => {
@@ -104,6 +105,10 @@ const ParentDashboard = () => {
         </div>
 
         {/* Main Content */}
+        <div className="mb-6">
+          <LinkByEmailCard mode="parent" onLinked={() => window.location.reload()} />
+        </div>
+
         {children.length > 0 ? (
           <div className="space-y-6">
             {children.map((child) => (

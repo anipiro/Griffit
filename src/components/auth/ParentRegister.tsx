@@ -18,7 +18,7 @@ const ParentRegister = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!fullName || !email || !password) {
       toast({
         title: "Missing Information",
@@ -40,7 +40,6 @@ const ParentRegister = () => {
     setLoading(true);
 
     try {
-      // Sign up the user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -51,18 +50,25 @@ const ParentRegister = () => {
 
       if (authError) throw authError;
 
-      if (!authData.user) {
+      let user = authData?.user;
+      if (!user) {
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (signInError) throw signInError;
+        user = signInData?.user;
+      }
+
+      if (!user) {
         throw new Error("User creation failed");
       }
 
-      // Create parent profile
-      const { error: profileError } = await supabase
-        .from("parents")
-        .insert({
-          user_id: authData.user.id,
-          full_name: fullName,
-          email: email,
-        });
+      const { error: profileError } = await supabase.from("parents").insert({
+        user_id: user.id,
+        full_name: fullName,
+        email,
+      });
 
       if (profileError) throw profileError;
 
