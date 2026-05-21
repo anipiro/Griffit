@@ -25,8 +25,17 @@ window.addEventListener("unhandledrejection", (ev) => {
 	showErrorOverlay(String((ev.reason && (ev.reason.stack || ev.reason.message)) || ev.reason || "Unhandled rejection"));
 });
 
-try {
-	createRoot(document.getElementById("root")!).render(<App />);
-} catch (err: any) {
-	showErrorOverlay(String(err?.stack || err?.message || err));
+async function start() {
+	try {
+		if (import.meta.env.VITE_USE_MOCKS === 'true') {
+			// Start MSW in development when requested
+			const { worker } = await import('./mocks/browser');
+			await worker.start();
+		}
+		createRoot(document.getElementById("root")!).render(<App />);
+	} catch (err: any) {
+		showErrorOverlay(String(err?.stack || err?.message || err));
+	}
 }
+
+start();

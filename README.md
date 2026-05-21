@@ -44,10 +44,23 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## Local setup notes
+## Quick local setup (recommended)
 
-- Copy `/.env.example` to `/.env` and replace the `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` placeholders with your Supabase project values.
-- Start the dev server with `npm run dev`. If the app opens on the wrong port, check the terminal for the URL (Vite may auto-choose an available port).
+- Prerequisites: Docker Desktop and Node.js + npm.
+- Install the Supabase CLI once (used by the local emulator):
 
-If you are onboarding a new contributor, including a filled `.env.example` (with placeholder values) helps them see a clear config message in the browser if the real keys are not provided.
+```bash
+npm install -g supabase
+```
+
+- Install project deps and start local Supabase + dev server:
+
+```bash
+npm install
+npm run dev:local
+```
+
+- This starts a local Supabase stack (via Docker) and the Vite dev server together. Data lives under `./supabase` and is for development only.
+
+- If you prefer not to run the emulator, you can still copy `/.env.example` to `/.env` and provide values from your Supabase dashboard (advanced users).
 
