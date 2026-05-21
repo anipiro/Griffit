@@ -19,7 +19,6 @@ export type Database = {
           avatar_type: string | null
           child_name: string
           created_at: string
-          email: string
           id: string
           parent_id: string | null
           updated_at: string
@@ -29,7 +28,6 @@ export type Database = {
           avatar_type?: string | null
           child_name: string
           created_at?: string
-          email: string
           id?: string
           parent_id?: string | null
           updated_at?: string
@@ -39,7 +37,6 @@ export type Database = {
           avatar_type?: string | null
           child_name?: string
           created_at?: string
-          email?: string
           id?: string
           parent_id?: string | null
           updated_at?: string
@@ -218,18 +215,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      link_child_to_parent_by_email: {
-        Args: {
-          target_child_email: string
-        }
-        Returns: void
-      }
-      link_parent_to_child_by_email: {
-        Args: {
-          target_parent_email: string
-        }
-        Returns: void
-      }
+      [_ in never]: never
     }
     Enums: {
       user_type: "parent" | "child"
