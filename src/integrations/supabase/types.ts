@@ -157,6 +157,54 @@ export type Database = {
           },
         ]
       }
+      encouragement_messages: {
+        Row: {
+          badge_type: string
+          child_id: string
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          parent_id: string
+          read_at: string | null
+        }
+        Insert: {
+          badge_type: string
+          child_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          parent_id: string
+          read_at?: string | null
+        }
+        Update: {
+          badge_type?: string
+          child_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          parent_id?: string
+          read_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encouragement_messages_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encouragement_messages_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "parents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parents: {
         Row: {
           created_at: string
