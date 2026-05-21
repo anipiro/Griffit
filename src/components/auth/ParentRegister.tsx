@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { signInWithEmailPassword, signUpWithEmailPassword } from "@/lib/supabase-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,22 +41,17 @@ const ParentRegister = () => {
     setLoading(true);
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const { data: authData, error: authError } = await signUpWithEmailPassword(
         email,
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-        },
-      });
+        `${window.location.origin}/`
+      );
 
       if (authError) throw authError;
 
       let user = authData?.user;
       if (!user) {
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { data: signInData, error: signInError } = await signInWithEmailPassword(email, password);
         if (signInError) throw signInError;
         user = signInData?.user;
       }
